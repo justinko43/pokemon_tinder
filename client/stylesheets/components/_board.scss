@@ -1,0 +1,50 @@
+.board {
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+
+  .button-wrapper {
+    margin-top: 20px;
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      font-size: 30px;
+
+    }
+
+    .dismiss {
+      background-color: red;
+    }
+
+    .favorite {
+      background-color: lightgreen;
+    }
+  }
+
+  .scrim {
+    position: absolute;
+    display: flex;
+    background-color: rgba(0,0,0,0.5);
+    top: 0; 
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hide {
+    display: none;
+  }
+}

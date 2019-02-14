@@ -1,0 +1,27 @@
+.card {
+  padding: 0px 20px 20px 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  background-color: lightgrey;
+  max-width: 600px;
+
+  h4 {
+    float: left;
+  }
+
+  img {
+    border: 1px solid black;
+    padding: 25x;
+    width: 450px;
+    height: 450px;
+    object-fit: cover;
+    background-color: white;
+  }
+
+  .word-wrapper {
+    width: 100%;
+    text-align: left;
+  }
+}

@@ -1,0 +1,31 @@
+body {
+  margin: 0px;
+  font-family: 'Open Sans', sans-serif;
+  font: 16px;
+}
+
+// set the box model to include padding, border, and margin
+// in sizing calculations
+*, *:before, *:after {
+  box-sizing: border-box;
+  position: relative;
+}
+
+// default removes focus effects
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button {
+  padding: 0;
+  border: none;
+  font: inherit;
+  color: inherit;
+  // background-color: transparent;
+  /* show a hand cursor on hover; some argue that we
+  should keep the default arrow cursor for buttons */
+  cursor: pointer;
+}
+
+@import 'components/all';
