@@ -2,9 +2,9 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const pokemons = require('./routes/api');
 require('dotenv').config();
 
-// add route
 const app = express();
 
 mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
@@ -23,6 +23,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('build'));
+
+// our routes
+app.use('/pokemons', pokemons);
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
