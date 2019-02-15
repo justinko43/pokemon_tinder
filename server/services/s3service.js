@@ -8,7 +8,7 @@ console.log(process.env.ACCESS_KEY_ID);
 AWS.config.update({
   secretAccessKey: process.env.ACCESS_KEY_SECRET,
   accessKeyId: process.env.ACCESS_KEY_ID,
-  region: 'us-west-2',
+  region: process.env.S3_REGION,
 });
 
 const s3 = new AWS.S3();
@@ -26,7 +26,7 @@ const upload = multer({
   storage: multerS3({
     acl: 'public-read',
     s3,
-    bucket: 'pokemon1928',
+    bucket: process.env.S3_BUCKET,
     metadata: (req, file, cb) => {
       cb(null, { fieldName: 'TESTING_METADATA' });
     },

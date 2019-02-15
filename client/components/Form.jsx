@@ -1,6 +1,6 @@
 /**
  * TODOS: find a better way to add images to forms and proper submission
- * 
+ *
  * idea was that we would post image first, get a location of the image back, and then store that image link in our put/post req.
  */
 
@@ -15,7 +15,7 @@ class Form extends Component {
   constructor(props) {
     super(props);
     const {
-      title,
+      name,
       description,
       factoid,
       image, // current image link
@@ -23,7 +23,7 @@ class Form extends Component {
     } = props;
 
     this.state = {
-      title: title || '',
+      name: name || '',
       description: description || '',
       factoid: factoid || '',
       image: image || '',
@@ -63,8 +63,7 @@ class Form extends Component {
     formData.append('image', file);
 
     const response = await helperFetch('images/upload', 'POST', {}, formData, true);
-
-    return response;
+    return response.data.location;
   }
 
   async submitHandler(event) {
@@ -74,30 +73,34 @@ class Form extends Component {
 
     const {
       id,
-      title,
+      name,
       description,
       factoid,
       image,
     } = this.state;
 
     const data = {
-      title,
+      name,
       description,
       factoid,
       image: location,
     };
 
     if (id) {
-      helperFetch(`pokemons/${id}`, 'PUT', data);
+      helperFetch(`pokemons/${id}`, 'PUT', {
+            "Content-Type": "application/json",
+        }, data);
     } else {
-      helperFetch('pokemons', 'POST', data);
+      helperFetch('pokemons', 'POST', {
+            "Content-Type": "application/json",
+        }, data);
     }
     toggleForm();
   }
 
   render() {
     const {
-      title,
+      name,
       description,
       factoid,
     } = this.state;
@@ -110,8 +113,8 @@ class Form extends Component {
             <input
               placeholder="Name"
               type="text"
-              name="title"
-              value={title}
+              name="name"
+              value={name}
               onChange={this.handleInputChange}
             />
           </div>
@@ -158,7 +161,7 @@ class Form extends Component {
 }
 
 Form.propTypes = {
-  title: PropTypes.string,
+  name: PropTypes.string,
   description: PropTypes.string,
   factoid: PropTypes.string,
   image: PropTypes.string,
@@ -167,7 +170,7 @@ Form.propTypes = {
 };
 
 Form.defaultProps = {
-  title: '',
+  name: '',
   description: '',
   factoid: '',
   image: '',
