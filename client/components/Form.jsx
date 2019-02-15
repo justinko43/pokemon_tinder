@@ -1,5 +1,15 @@
+/**
+ * TODOS: find a better way to add images to forms and proper submission
+ * 
+ * idea was that we would post image first, get a location of the image back, and then store that image link in our put/post req.
+ */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+import fetcher from '../util/fetcher';
+
+const helperFetch = fetcher('http://localhost:3000/');
 
 class Form extends Component {
   constructor(props) {
@@ -8,7 +18,8 @@ class Form extends Component {
       title,
       description,
       factoid,
-      image,
+      image, // current image link
+      id,
     } = props;
 
     this.state = {
@@ -16,10 +27,25 @@ class Form extends Component {
       description: description || '',
       factoid: factoid || '',
       image: image || '',
+      file: null,
+      id: id || null,
     };
 
+    this.handleImageChange = this.handleImageChange.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  handleImageChange(event) {
+    event.preventDefault();
+    const reader = new FileReader();
+    const file = event.target.files[0];
+    reader.onloadend = () => {
+      this.setState({
+        file,
+      });
+    };
+    reader.readAsDataURL(file);
   }
 
   handleInputChange(event) {
@@ -31,10 +57,42 @@ class Form extends Component {
     });
   }
 
-  submitHandler(e) {
-    e.preventDefault();
-    // perform async call here
-    // exit out of form
+  async postImage() {
+    const { file } = this.state;
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await helperFetch('images/upload', 'POST', {}, formData, true);
+
+    return response;
+  }
+
+  async submitHandler(event) {
+    event.preventDefault();
+    const { toggleForm } = this.props;
+    const location = await this.postImage();
+
+    const {
+      id,
+      title,
+      description,
+      factoid,
+      image,
+    } = this.state;
+
+    const data = {
+      title,
+      description,
+      factoid,
+      image: location,
+    };
+
+    if (id) {
+      helperFetch(`pokemons/${id}`, 'PUT', data);
+    } else {
+      helperFetch('pokemons', 'POST', data);
+    }
+    toggleForm();
   }
 
   render() {
@@ -42,14 +100,15 @@ class Form extends Component {
       title,
       description,
       factoid,
-      image,
     } = this.state;
 
     return (
       <form onSubmit={this.submitHandler} onClick={(e) => e.stopPropagation()}>
+        <h3>Pokemon Card</h3>
         <div className="input-container">
           <div className="input-div">
             <input
+              placeholder="Name"
               type="text"
               name="title"
               value={title}
@@ -57,23 +116,18 @@ class Form extends Component {
             />
           </div>
 
-          {
-            image.length === 0
-              ? <img src={image} alt="" />
-              : <div className="image-placeholder">Please select an Image</div>
-          }
-
           <div className="input-div">
             <input
               type="file"
               name="image"
-              onChange={this.handleInputChange}
+              onChange={this.handleImageChange}
             />
           </div>
 
           <div className="textarea-div">
             <textarea
               name="factoid"
+              placeholder="Factoid"
               id="factoid"
               cols="30"
               rows="6"
@@ -86,6 +140,7 @@ class Form extends Component {
             <textarea
               name="description"
               id="description"
+              placeholder="Description"
               cols="30"
               rows="6"
               value={description}
@@ -93,7 +148,7 @@ class Form extends Component {
             />
           </div>
 
-          <button type="submit">
+          <button type="submit" className="add">
             SUBMIT
           </button>
         </div>
@@ -107,6 +162,8 @@ Form.propTypes = {
   description: PropTypes.string,
   factoid: PropTypes.string,
   image: PropTypes.string,
+  id: PropTypes.string,
+  toggleForm: PropTypes.func.isRequired,
 };
 
 Form.defaultProps = {
@@ -114,6 +171,7 @@ Form.defaultProps = {
   description: '',
   factoid: '',
   image: '',
+  id: null,
 };
 
 export default Form;
