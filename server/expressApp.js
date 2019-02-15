@@ -3,6 +3,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const pokemons = require('./routes/api');
+const images = require('./routes/images');
 require('dotenv').config();
 
 const app = express();
@@ -20,12 +21,13 @@ app.use((req, res, next) => {
 });
 
 // parse request body and cookies
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '4MB' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('build'));
 
 // our routes
 app.use('/pokemons', pokemons);
+app.use('/images', images);
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
