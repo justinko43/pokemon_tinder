@@ -2,45 +2,29 @@ import React, { Component } from 'react';
 import Card from './Card';
 import Form from './Form';
 
-const applyUpdateResult = result => prevState => ({
-  hits: [...prevState.hits, ...result.hits],
-  page: result.page,
-});
+import fetcher from '../util/fetcher';
 
-const applySetResult = result => prevState => ({
-  hits: result.hits,
-  page: result.page,
-});
+const helperFetch = fetcher('http://localhost:3000/');
 
 class Board extends Component {
   constructor() {
     super();
     this.state = {
       index: 0,
-      list: [{
-        name: 'pikachu',
-        image: '',
-        description: 'test test',
-        factoid: 'weeee',
-      },
-      {
-        name: 'pikachu2',
-        image: '',
-        description: 'test test',
-        factoid: 'weeee',
-      },
-      ],
+      list: [],
       atEnd: false,
       form: false,
     };
 
     this.clickHandler = this.clickHandler.bind(this);
-    this.clickFormHandler = this.clickFormHandler.bind(this);
+    this.toggleForm = this.toggleForm.bind(this);
   }
 
-  componentDidMount() {
-    // run async call to server here
-
+  async componentDidMount() {
+    const response = await helperFetch('pokemons', 'GET', { 'Content-Type': 'application/json' });
+    this.setState({
+      list: [...response.data],
+    });
   }
 
   clickHandler(event) {
@@ -57,31 +41,35 @@ class Board extends Component {
     }
   }
 
-  clickFormHandler(event) {
-    event.preventDefault();
+  toggleForm(event) {
+    if (event) event.preventDefault();
     const { form } = this.state;
     this.setState({ form: !form });
   }
 
-  static renderMainView(card, atEnd) {
+  static renderMainView({ list, index, atEnd }) {
+    if (list.length === 0) return undefined;
+
     const {
       name,
       image,
       description,
       factoid,
-    } = card;
+      _id,
+    } = list[index];
 
     if (atEnd) {
       return (
         <div className="end">
-          No more cards available. Make more!
-          <button type="button">Toggle Button</button>
+          <h3>No more cards available. Make more!</h3>
+          <button type="button" className="add">Add More!</button>
         </div>
       );
     }
 
     return (
       <Card
+        id={_id}
         name={name}
         image={image}
         description={description}
@@ -92,34 +80,31 @@ class Board extends Component {
 
   render() {
     const {
-      list,
-      index,
-      atEnd,
       form,
     } = this.state;
 
     return (
       <div className="board">
-        {Board.renderMainView(list[index], atEnd)}
+        {Board.renderMainView(this.state)}
         <div className="button-wrapper">
-          <button className="dismiss" type="button" onClick={this.clickHandler}>
+          <button className="dismiss circle" type="button" onClick={this.clickHandler}>
             <span role="img" aria-label="thumbs-down">
               👎
             </span>
           </button>
-          <button className="favorite" type="button" onClick={this.clickHandler}>
+          <button type="button" className="add" onClick={this.toggleForm}>
+            Add your own!
+          </button>
+          <button className="favorite circle" type="button" onClick={this.clickHandler}>
             <span role="img" aria-label="OK-Hand">
               👌
             </span>
           </button>
         </div>
-        <div className="add-wrapper">
-          <button type="button" className="add" onClick={this.clickFormHandler}>
-            Add your own!
-          </button>
-        </div>
-        <div className={!form ? 'hide' : 'scrim'} onClick={this.clickFormHandler}>
-          <Form />
+        <div
+          className={!form ? 'hide' : 'scrim'}
+          onClick={this.toggleForm}>
+          <Form toggleForm={this.toggleForm} />
         </div>
       </div>
     );
