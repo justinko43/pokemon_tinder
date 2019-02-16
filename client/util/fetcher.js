@@ -13,7 +13,7 @@ export default url => async (path, method, header, data, isImage) => {
     const json = await response.json();
     return {
       status: response.status,
-      data: response.status === 200 ? json : null,
+      data: json,
     };
   } catch (e) {
     return {
