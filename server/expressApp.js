@@ -9,6 +9,7 @@ require('dotenv').config();
 const app = express();
 
 mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true });
+mongoose.set('useFindAndModify', false);
 mongoose.connection.once('open', () => {
   console.log('\nConnected with database');
 });
@@ -17,6 +18,7 @@ mongoose.connection.once('open', () => {
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   next();
 });
 

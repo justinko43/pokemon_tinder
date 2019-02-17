@@ -14,13 +14,20 @@ class Board extends Component {
       list: [],
       atEnd: false,
       form: false,
+      edit: false,
     };
 
+    this.getPokemons = this.getPokemons.bind(this);
     this.clickHandler = this.clickHandler.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
+    this.toggleEdit = this.toggleEdit.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getPokemons();
+  }
+
+  async getPokemons() {
     const response = await helperFetch('pokemons', 'GET', { 'Content-Type': 'application/json' });
     this.setState({
       list: [...response.data],
@@ -41,15 +48,29 @@ class Board extends Component {
     }
   }
 
-  toggleForm(event) {
-    if (event) event.preventDefault();
-    const { form } = this.state;
-    this.setState({ form: !form });
+  toggleEdit() {
+    const { edit } = this.state;
+    this.setState({ edit: !edit });
   }
 
-  static renderMainView({ list, index, atEnd }) {
-    if (list.length === 0) return undefined;
+  toggleForm(event) {
+    if (event) event.preventDefault();
+    const { form, edit } = this.state;
+    const state = { form: !form };
+    if (edit) {
+      state.edit = false;
+    }
+    this.setState(state);
+  }
 
+  renderMainView() {
+    const {
+      list,
+      index,
+      atEnd,
+    } = this.state;
+
+    if (list.length === 0) return undefined;
     const {
       name,
       image,
@@ -74,8 +95,35 @@ class Board extends Component {
         image={image}
         description={description}
         factoid={factoid}
+        toggleEdit={this.toggleEdit}
+        toggleForm={this.toggleForm}
       />
     );
+  }
+
+  renderForm() {
+    const {
+      list,
+      edit,
+      index,
+    } = this.state;
+
+    if (edit) {
+      return (
+        <Form
+          {...list[index]}
+          toggleForm={this.toggleForm}
+          getPokemons={this.getPokemons}
+        />
+      );
+    }
+
+    return (
+      <Form
+        toggleForm={this.toggleForm}
+        getPokemons={this.getPokemons}
+      />
+    )
   }
 
   render() {
@@ -85,7 +133,7 @@ class Board extends Component {
 
     return (
       <div className="board">
-        {Board.renderMainView(this.state)}
+        {this.renderMainView()}
         <div className="button-wrapper">
           <button className="dismiss circle" type="button" onClick={this.clickHandler}>
             <span role="img" aria-label="thumbs-down">
@@ -104,7 +152,7 @@ class Board extends Component {
         <div
           className={!form ? 'hide' : 'scrim'}
           onClick={this.toggleForm}>
-          <Form toggleForm={this.toggleForm} />
+          {this.renderForm()}
         </div>
       </div>
     );

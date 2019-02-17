@@ -16,11 +16,24 @@ const Card = (props) => {
     image,
     description,
     factoid,
+    toggleForm,
+    toggleEdit,
   } = props;
 
   return (
     <div className="card">
-      <h3>{name}</h3>
+      <div>
+        <h3>{name}</h3>
+        <button
+          type="button"
+          onClick={(e) => {
+            toggleForm(e);
+            toggleEdit(e);
+          }}
+        >
+          EDIT
+        </button>
+      </div>
       <img src={image} alt=""/>
       <div className="word-wrapper">
         <p>
@@ -41,6 +54,8 @@ Card.propTypes = {
   description: PropTypes.string.isRequired,
   factoid: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
+  toggleEdit: PropTypes.func.isRequired,
+  toggleForm: PropTypes.func.isRequired,
 };
 
 export default Card;

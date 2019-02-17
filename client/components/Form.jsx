@@ -1,7 +1,6 @@
 /**
  * TODOS: find a better way to add images to forms and proper submission
  * 
- * idea was that we would post image first, get a location of the image back, and then store that image link in our put/post req.
  */
 
 /* eslint-disable indent */
@@ -23,7 +22,7 @@ class Form extends Component {
       factoid,
       image, // current image link
       id,
-    } = props;
+    } = this.props;
 
     this.state = {
       name: name || '',
@@ -38,6 +37,30 @@ class Form extends Component {
     this.submitHandler = this.submitHandler.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
+
+  static getDerivedStateFromProps(props, state) {
+    const {
+      name,
+      description,
+      factoid,
+      image, // current image link
+      _id,
+    } = props;
+
+    if (_id !== state.id) {
+      return {
+        name,
+        description,
+        factoid,
+        image,
+        id: _id,
+        file: null,
+      };
+    }
+
+    return null;
+  }
+
 
   handleImageChange(event) {
     event.preventDefault();
@@ -54,7 +77,6 @@ class Form extends Component {
   handleInputChange(event) {
     const { target } = event;
     const { value, name } = target;
-
     this.setState({
       [name]: value,
     });
@@ -71,38 +93,45 @@ class Form extends Component {
 
   async submitHandler(event) {
     event.preventDefault();
-    const { toggleForm } = this.props;
-    const location = await this.postImage();
-
+    const { toggleForm, getPokemons } = this.props;
     const {
       id,
       name,
       description,
       factoid,
       image,
+      file,
     } = this.state;
+    let location;
+
+    if (image && !file) {
+      location = image;
+    } else {
+      const { data } = await this.postImage();
+      location = data.location;
+    }
 
     const data = {
       name,
       description,
       factoid,
-      image: location.data.location,
+      image: location,
     };
 
     if (id) {
-      helperFetch(`pokemons/${id}`,
+      await helperFetch(`pokemons/${id}`,
                   'PUT',
                   { 'Content-Type': 'application/json' },
                   data,
                   false);
     } else {
-      helperFetch('pokemons/',
+      await helperFetch('pokemons/',
                   'POST',
                   { 'Content-Type': 'application/json' },
                   data,
                   false);
     }
-    
+    getPokemons();
     toggleForm();
   }
 
@@ -175,6 +204,7 @@ Form.propTypes = {
   image: PropTypes.string,
   id: PropTypes.string,
   toggleForm: PropTypes.func.isRequired,
+  getPokemons: PropTypes.func.isRequired,
 };
 
 Form.defaultProps = {
