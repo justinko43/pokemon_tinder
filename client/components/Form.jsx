@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 
 import fetcher from '../util/fetcher';
 
-const helperFetch = fetcher(process.env.API_URL);
+const helperFetch = fetcher('/');
 
 class Form extends Component {
   constructor(props) {

@@ -13,7 +13,7 @@ import Form from './Form';
 
 import fetcher from '../util/fetcher';
 
-const helperFetch = fetcher(process.env.API_URL);
+const helperFetch = fetcher('/');
 
 class Board extends Component {
   constructor() {
