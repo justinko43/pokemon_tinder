@@ -31,6 +31,7 @@ class Board extends Component {
     this.toggleForm = this.toggleForm.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
     this.onDelete = this.onDelete.bind(this);
+    this.turnOffEnd = this.turnOffEnd.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +53,12 @@ class Board extends Component {
     const response = await helperFetch('pokemons', 'GET', { 'Content-Type': 'application/json' });
     this.setState({
       list: [...response.data],
+    });
+  }
+
+  turnOffEnd() {
+    this.setState({
+      atEnd: false,
     });
   }
 
@@ -135,6 +142,7 @@ class Board extends Component {
           {...list[index]}
           toggleForm={this.toggleForm}
           getPokemons={this.getPokemons}
+          turnOffEnd={this.turnOffEnd}
         />
       );
     }
@@ -143,6 +151,7 @@ class Board extends Component {
       <Form
         toggleForm={this.toggleForm}
         getPokemons={this.getPokemons}
+        turnOffEnd={this.turnOffEnd}
       />
     );
   }

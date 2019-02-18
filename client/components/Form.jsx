@@ -111,7 +111,7 @@ class Form extends Component {
 
   async submitHandler(event) {
     event.preventDefault();
-    const { toggleForm, getPokemons } = this.props;
+    const { toggleForm, getPokemons, turnOffEnd } = this.props;
     const {
       id,
       name,
@@ -151,6 +151,7 @@ class Form extends Component {
     }
     this.clearState();
     getPokemons();
+    turnOffEnd();
     toggleForm();
   }
 
@@ -165,7 +166,7 @@ class Form extends Component {
       <div className="image-placeholder">
         Please upload an image!
       </div>
-    )
+    );
   }
 
   render() {
@@ -244,6 +245,7 @@ Form.propTypes = {
   id: PropTypes.string,
   toggleForm: PropTypes.func.isRequired,
   getPokemons: PropTypes.func.isRequired,
+  turnOffEnd: PropTypes.func.isRequired,
 };
 
 Form.defaultProps = {
