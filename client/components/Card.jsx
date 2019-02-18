@@ -22,10 +22,11 @@ const Card = (props) => {
 
   return (
     <div className="card">
-      <div>
+      <div className="card-header">
         <h3>{name}</h3>
         <button
           type="button"
+          className="edit-button"
           onClick={(e) => {
             toggleForm(e);
             toggleEdit(e);

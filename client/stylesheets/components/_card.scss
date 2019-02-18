@@ -5,10 +5,20 @@
   flex-flow: column nowrap;
   align-items: center;
   background-color: lightgrey;
-  max-width: 600px;
+  width: 600px;
 
-  h4 {
-    float: left;
+  .card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column nowrap;
+    width: 100%;
+    
+    h3 {
+      text-align: center;
+      width: 100%;
+      margin-bottom: 5px;
+    }
   }
 
   img {
@@ -23,5 +33,15 @@
   .word-wrapper {
     width: 100%;
     text-align: left;
+  }
+
+  .edit-button {
+    background-color: rgb(0, 146, 0);
+    color: white;
+    margin-bottom: 5px;
+  }
+
+  .edit-button:hover {
+    background-color: green;
   }
 }
