@@ -39,7 +39,7 @@ Form.jsx holds logic relevant to the card that we're currently editing or creati
 * **name:** (String) Name of our Pokemon
 * **description:** (String) Description of our Pokemon
 * **factoid:** (String) Factoid of our Pokemon
-* **image:** (String) Image of our Pokemon (either as a link stored in S3, or a readable data:img string)
+* **image:** (String) Image of our Pokemon (stored as retrievable link in S3)
 * **file:** (Object) File object of the image
 * **id:** (String) Unique identifier of that card. Relevant when we're updating a card
 
