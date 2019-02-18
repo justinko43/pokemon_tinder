@@ -1,10 +1,18 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const dotenv = require('dotenv');
+
+const env = dotenv.config().parsed;
+
+const envKeys = Object.keys(env).reduce((prev, next) => {
+  prev[`process.env.${next}`] = JSON.stringify(env[next]);
+  return prev;
+}, {});
 
 const paths = {
   BUILD: path.resolve(__dirname, './build'),
-  SRC: path.resolve(__dirname, './client')
+  SRC: path.resolve(__dirname, './client'),
 };
 
 module.exports = {
@@ -13,7 +21,7 @@ module.exports = {
   },
   output: {
     path: paths.BUILD,
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -31,42 +39,43 @@ module.exports = {
         test: /.(css|scss)$/,
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
-      { 
-        test: /\.svg$/, 
+      {
+        test: /\.svg$/,
         use: {
-          loader: 'url-loader'
-        }
+          loader: 'url-loader',
+        },
       },
       {
-        test: /\.(png|gif|jpg|JPG|jpeg|ico)$/, 
+        test: /\.(png|gif|jpg|JPG|jpeg|ico)$/,
         exclude: /node_modules/,
-        loader: 'file-loader?name=images/[name].[ext]'
+        loader: 'file-loader?name=images/[name].[ext]',
       },
       {
         test: /\.(html)$/,
         use: {
           loader: 'html-loader',
           options: {
-            minimize: true
-          }
-        }
-      }
-    ]
+            minimize: true,
+          },
+        },
+      },
+    ],
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   },
   plugins: [
+    new webpack.DefinePlugin(envKeys),
     new HtmlWebpackPlugin({
       template: './client/index.html',
     }),
     new webpack.NamedModulesPlugin(),
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
   ],
   devServer: {
     contentBase: paths.BUILD,
     hot: true,
     port: 9000,
     historyApiFallback: true,
-  }
+  },
 };
