@@ -51,11 +51,11 @@ pokemonController.getPokemon = async (req, res, next) => {
 };
 
 pokemonController.deletePokemon = async (req, res, next) => {
-  const { _id } = req.params.id;
+  const { id } = req.params;
 
   try {
-    await Pokemon.deleteOne({ _id });
-    res.status(200);
+    await Pokemon.deleteOne({ _id: id });
+    res.status(200).send('Successfully deleted');
   } catch (err) {
     next(err);
     res.status(500).send(err);

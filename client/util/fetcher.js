@@ -11,9 +11,11 @@ export default url => async (path, method, header, data, isImage) => {
     });
 
     const json = await response.json();
+    const goodStatus = /^[2-3][0-9][0-9]$/;
+
     return {
       status: response.status,
-      data: json,
+      data: goodStatus.test(response.status) ? json : null,
     };
   } catch (e) {
     return {
