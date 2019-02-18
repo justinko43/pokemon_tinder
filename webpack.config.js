@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+require('dotenv').config();
 
-const envKeys = { API_URL: process.env.API_URL };
+const envKeys = { 'process.env.API_URL': process.env.API_URL };
 
 const paths = {
   BUILD: path.resolve(__dirname, './build'),
