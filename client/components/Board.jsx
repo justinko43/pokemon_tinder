@@ -1,10 +1,19 @@
+/**
+ * ************************************
+ *
+ * @module  Board
+ * @description Main container component that holds application level logic
+ *
+ * ************************************
+ */
+
 import React, { Component } from 'react';
 import Card from './Card';
 import Form from './Form';
 
 import fetcher from '../util/fetcher';
 
-const helperFetch = fetcher('http://localhost:3000/');
+const helperFetch = fetcher(process.env.API_URL);
 
 class Board extends Component {
   constructor() {
@@ -21,9 +30,21 @@ class Board extends Component {
     this.clickHandler = this.clickHandler.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
 
   componentDidMount() {
+    this.getPokemons();
+  }
+
+  async onDelete(event) {
+    event.preventDefault();
+    const { list, index } = this.state;
+    const { _id } = list[index];
+    await helperFetch(`pokemons/${_id}`, 'DELETE', { 'Content-Type': 'application/json' });
+    await this.setState({
+      index: index - 1,
+    });
     this.getPokemons();
   }
 
@@ -83,7 +104,7 @@ class Board extends Component {
       return (
         <div className="end">
           <h3>No more cards available. Make more!</h3>
-          <button type="button" className="add">Add More!</button>
+          <button type="button" className="add" onClick={this.toggleForm}>Add More!</button>
         </div>
       );
     }
@@ -123,12 +144,13 @@ class Board extends Component {
         toggleForm={this.toggleForm}
         getPokemons={this.getPokemons}
       />
-    )
+    );
   }
 
   render() {
     const {
       form,
+      atEnd,
     } = this.state;
 
     return (
@@ -142,6 +164,9 @@ class Board extends Component {
           </button>
           <button type="button" className="add" onClick={this.toggleForm}>
             Add your own!
+          </button>
+          <button type="button" className={`delete ${atEnd ? 'disabled' : ''}`} onClick={this.onDelete}>
+            Delete
           </button>
           <button className="favorite circle" type="button" onClick={this.clickHandler}>
             <span role="img" aria-label="OK-Hand">
