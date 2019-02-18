@@ -7,7 +7,8 @@
     "dev": "NODE_ENV=development webpack-dev-server --open --hot --mode development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE ./server/server.js",
-    "build": "NODE_ENV=production webpack --config ./webpack.config.js"
+    "build": "NODE_ENV=production webpack --config ./webpack.config.js",
+    "heroku-postbuild": "npm install && npm run build"
   },
   "repository": {
     "type": "git",
