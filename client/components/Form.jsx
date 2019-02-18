@@ -1,17 +1,19 @@
+/* eslint-disable indent */
 /**
- * TODOS: find a better way to add images to forms and proper submission
- * 
+ * ************************************
+ *
+ * @module  Form
+ * @description Stateful component that updates or creates new pokemon
+ *
+ * ************************************
  */
 
-/* eslint-disable indent */
-
-
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import fetcher from '../util/fetcher';
 
-const helperFetch = fetcher('http://localhost:3000/');
+const helperFetch = fetcher(process.env.API_URL);
 
 class Form extends Component {
   constructor(props) {
@@ -33,9 +35,11 @@ class Form extends Component {
       id: id || null,
     };
 
+    this.renderImage = this.renderImage.bind(this);
     this.handleImageChange = this.handleImageChange.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.clearState = this.clearState.bind(this);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -61,6 +65,19 @@ class Form extends Component {
     return null;
   }
 
+  clearState() {
+    const newState = {
+      name: '',
+      description: '',
+      factoid: '',
+      image: '',
+      file: null,
+      id: null,
+    };
+
+    this.setState(newState);
+  }
+
 
   handleImageChange(event) {
     event.preventDefault();
@@ -69,6 +86,7 @@ class Form extends Component {
     reader.onloadend = () => {
       this.setState({
         file,
+        image: reader.result,
       });
     };
     reader.readAsDataURL(file);
@@ -104,7 +122,7 @@ class Form extends Component {
     } = this.state;
     let location;
 
-    if (image && !file) {
+    if (!file) {
       location = image;
     } else {
       const { data } = await this.postImage();
@@ -131,8 +149,23 @@ class Form extends Component {
                   data,
                   false);
     }
+    this.clearState();
     getPokemons();
     toggleForm();
+  }
+
+  renderImage() {
+    const { image } = this.state;
+
+    if (image) {
+      return <img width="200px" height="200px" src={image} alt="" />;
+    }
+
+    return (
+      <div className="image-placeholder">
+        Please upload an image!
+      </div>
+    )
   }
 
   render() {
@@ -140,6 +173,7 @@ class Form extends Component {
       name,
       description,
       factoid,
+      image,
     } = this.state;
 
     return (
@@ -154,6 +188,11 @@ class Form extends Component {
               value={name}
               onChange={this.handleInputChange}
             />
+          </div>
+
+          <div className="current-image">
+            <span>Current Image</span>
+            {this.renderImage()}
           </div>
 
           <div className="input-div">
