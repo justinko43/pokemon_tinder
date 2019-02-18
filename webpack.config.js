@@ -3,7 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 require('dotenv').config();
 
-const envKeys = { 'process.env.API_URL': process.env.API_URL };
+const envKeys = { 'process.env.API_URL': JSON.stringify(process.env.API_URL) };
 
 const paths = {
   BUILD: path.resolve(__dirname, './build'),
@@ -32,7 +32,7 @@ module.exports = {
       },
       {
         test: /.(css|scss)$/,
-        use: ['style-loader', 'css-loader', 'sass-loader']
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.svg$/,
